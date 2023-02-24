@@ -26,9 +26,9 @@ import com.sun.identity.entitlement.ConditionDecision;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
 
+import static com.sun.identity.authentication.util.ISAuthConstants.REQUEST_IP;
 import static com.sun.identity.entitlement.EntitlementException.PROPERTY_VALUE_NOT_DEFINED;
 
-import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.shared.debug.Debug;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,14 +47,10 @@ import java.util.logging.Logger;
 import javax.security.auth.Subject;
 import org.forgerock.openam.core.CoreWrapper;
 
-import static org.forgerock.openam.entitlement.conditions.environment.ConditionConstants.*;
-
-import org.forgerock.openam.entitlement.conditions.environment.EntitlementCoreWrapper;
 import org.forgerock.openam.utils.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
-import org.neo4j.driver.internal.InternalDriver;
 import org.neo4j.driver.v1.exceptions.*;
 import org.neo4j.driver.v1.exceptions.SecurityException;
 
@@ -83,8 +79,7 @@ public class NeoUniversalCondition implements EntitlementCondition {
     private static final String NEO_DENY_RESULT = "neoDenyResult";
     private static final int QUERY_EXECUTION_MAX_RETRY = 2;
     private final CoreWrapper coreWrapper;
-    private final Debug debug;
-    private final EntitlementCoreWrapper entitlementCoreWrapper;
+    private static Debug debug = Debug.getInstance("amProfile");
     private static Driver driver;
 
     private String dbURL = null;
@@ -102,20 +97,16 @@ public class NeoUniversalCondition implements EntitlementCondition {
      * Constructs a new NeoUniversalCondition instance.
      */
     public NeoUniversalCondition() {
-        this(PrivilegeManager.debug, new CoreWrapper(), new EntitlementCoreWrapper());
+        this(new CoreWrapper());
     }
 
     /**
      * Constructs a new NeoUniversalCondition instance.
      *
-     * @param debug A Debug instance.
      * @param coreWrapper An instance of the CoreWrapper.
-     * @param entitlementCoreWrapper An instance of the EntitlementCoreWrapper.
      */
-    NeoUniversalCondition(Debug debug, CoreWrapper coreWrapper, EntitlementCoreWrapper entitlementCoreWrapper) {
-        this.debug = debug;
+    NeoUniversalCondition(CoreWrapper coreWrapper) {
         this.coreWrapper = coreWrapper;
-        this.entitlementCoreWrapper = entitlementCoreWrapper;
     }
 
     private static String getInitStringValue(Set<String> set) {

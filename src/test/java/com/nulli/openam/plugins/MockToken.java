@@ -20,6 +20,11 @@ public class MockToken implements SSOToken {
 	}
 
 	@Override
+	public String encodeURL(String url) throws SSOException {
+		return null;
+	}
+
+	@Override
 	public String dereferenceRestrictedTokenID(SSOToken arg0, String arg1) throws SSOException {
 		// TODO Auto-generated method stub
 		return null;
@@ -107,12 +112,6 @@ public class MockToken implements SSOToken {
 	public void setProperty(String arg0, String arg1) throws SSOException {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public Map<String, String> getProperties() throws SSOException {
-		Map<String, String> result = new HashMap();
-		return Collections.unmodifiableMap(result);
 	}
 
 }
